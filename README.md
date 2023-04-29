@@ -1,4 +1,14 @@
 # Scentbird Assesment
-Technical Assesment for Scenbird
+Technical Assessment for Scentbird
 
-There is a gift subscription page https://www.scentbird.com/gift?months=6 (no need to go further to other pages) I need you to write all possible scenarios for this page in a way you think is better. Also, please write an automation script that covers a few positive and a few negative scenarios using Playwright on the typescript. 
+For the tests I use:
+
+1. Typescript: ^5.0.4
+
+2. Playwright: ^1.32.3
+
+Before run the tests run the command:
+<code>npm install</code>
+
+To run the tests, run the following command:
+<code>npx playwright test</code>
