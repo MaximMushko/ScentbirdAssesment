@@ -12,3 +12,5 @@ Before run the tests run the command:
 
 To run the tests, run the following command:
 <code>npx playwright test</code>
+
+Written test cases are located on Scentbird Subscription Test Cases.xlsx
