@@ -1,0 +1,24 @@
+{
+  "name": "scentbirdassesment",
+  "version": "1.0.0",
+  "description": "Technical Assessment for Scentbird",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaximMushko/ScentbirdAssesment.git"
+  },
+  "author": "mmushko",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MaximMushko/ScentbirdAssesment/issues"
+  },
+  "homepage": "https://github.com/MaximMushko/ScentbirdAssesment#readme",
+  "dependencies": {
+    "playwright": "^1.32.3",
+    "typescript": "^5.0.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.32.3"
+  }
+}
