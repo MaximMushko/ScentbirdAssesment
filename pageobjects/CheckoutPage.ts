@@ -7,7 +7,11 @@ class CheckoutPage {
     }
 
     getPageTitle() {
-        this.page.getByTestId("title");
+        return this.page.getByTestId("title");
+    }
+
+    getCheckoutButton() {
+        return this.page.getByTestId("modalPrimaryButton");
     }
 }
 

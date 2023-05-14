@@ -58,6 +58,7 @@ test('Select Cologne', async () => {
     });
 
     await expect(checkoutPage.getPageTitle()).toHaveText(expectedMessages.checkoutMessage);
+    await expect(checkoutPage.getCheckoutButton()).toBeVisible();
 });
 
 test('Select Perfume', async() => {
@@ -71,6 +72,7 @@ test('Select Perfume', async() => {
     });
 
     await expect(checkoutPage.getPageTitle()).toHaveText(expectedMessages.checkoutMessage);
+    await expect(checkoutPage.getCheckoutButton()).toBeVisible();
 })
 
 test('Select Cologne/Perfume for a later date', async () =>{
@@ -85,6 +87,7 @@ test('Select Cologne/Perfume for a later date', async () =>{
     });
 
     await expect(checkoutPage.getPageTitle()).toHaveText(expectedMessages.checkoutMessage);
+    await expect(checkoutPage.getCheckoutButton()).toBeVisible();
 })
 
 test('Select Cologne/Perfume without a message', async () => {
@@ -98,6 +101,7 @@ test('Select Cologne/Perfume without a message', async () => {
     });
 
     await expect(checkoutPage.getPageTitle()).toHaveText(expectedMessages.checkoutMessage);
+    await expect(checkoutPage.getCheckoutButton()).toBeVisible();
 })
 
 test('Select Cologne/Perfume without Who is it from?', async() => {
@@ -111,6 +115,8 @@ test('Select Cologne/Perfume without Who is it from?', async() => {
     });
 
     await expect(checkoutPage.getPageTitle()).toHaveText(expectedMessages.checkoutMessage);
+    await expect(checkoutPage.getCheckoutButton()).toBeVisible();
+
 })
 
 test('Negative - no receipt name', async () => {

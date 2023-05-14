@@ -9,7 +9,7 @@ class SubscribePage {
     }
 
     async goToPage(){
-        await this.page.goto("/")
+        await this.page.goto("https://www.scentbird.com/gift?months=6")
         await this.page.waitForLoadState();
     }
 
@@ -18,7 +18,7 @@ class SubscribePage {
     }
 
     async selectItemType(itemType: ItemType){
-        await this.page.getByTestId(ItemType).click();
+        await this.page.getByTestId(itemType).click();
     }
 
     async specifyValueForInput(input: Inputs, value: string) {
