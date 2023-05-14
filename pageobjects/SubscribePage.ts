@@ -1,27 +1,5 @@
-import {Page, expect, Locator} from "@playwright/test";
-
-export enum ItemType {
-    COLOGNE = "recipientGenderOptionMale",
-    PERFUME = "recipientGenderOptionFemale",
-}
-
-export enum SendWhen {
-    NOW = "sendDateOptionNow",
-    LATER = "sendDateOptionLater"
-}
-
-export enum Inputs {
-    NAME= 'recipientName',
-    EMAIL = 'recipientEmail',
-    MESSAGE = 'recipientMessage',
-    SENDER = 'senderName',
-}
-
-export enum Errors {
-    NAME_ERROR = 'recipientNameError',
-    EMAIL_ERROR = 'recipientEmailError',
-    DATE_ERROR = 'dateError'
-}
+import {Page} from "@playwright/test";
+import {Errors, Inputs, ItemType, SendWhen} from "../types/subscriptionData";
 
 class SubscribePage {
     private readonly page: Page;
@@ -31,7 +9,7 @@ class SubscribePage {
     }
 
     async goToPage(){
-        await this.page.goto("https://www.scentbird.com/gift?months=6")
+        await this.page.goto("/")
         await this.page.waitForLoadState();
     }
 

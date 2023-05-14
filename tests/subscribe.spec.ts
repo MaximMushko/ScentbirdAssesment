@@ -1,10 +1,13 @@
 import {expect, test} from '@playwright/test';
-import SubscribePage, {Errors, Inputs, ItemType, SendWhen} from "../pageobjects/SubscribePage";
+import SubscribePage from "../pageobjects/SubscribePage";
 import CheckoutPage from "../pageobjects/CheckoutPage"
+import SubscriptionAction from "../actions/subscriptionAction";
+import {Errors, Inputs, ItemType, SendWhen} from "../types/subscriptionData";
 
 let page;
 let subscribePage;
 let checkoutPage;
+let subscribePageActions;
 
 const expectedTitle = '6 months gift subscription ($89)\n + 1 fragrance for you';
 
@@ -29,6 +32,7 @@ test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
     subscribePage = new SubscribePage(page);
     checkoutPage = new CheckoutPage(page)
+    subscribePageActions = new SubscriptionAction(subscribePage);
 });
 
 test.afterAll(async () => {
@@ -44,139 +48,137 @@ test('Should have title', async ( {page}) => {
 });
 
 test('Select Cologne', async () => {
-    await subscribePage.selectItemType(ItemType.COLOGNE);
-
-    await subscribePage.specifyValueForInput(Inputs.NAME, testData.name)
-    await subscribePage.specifyValueForInput(Inputs.EMAIL, testData.email)
-    await subscribePage.specifyValueForInput(Inputs.MESSAGE, testData.message)
-    await subscribePage.specifyValueForInput(Inputs.SENDER, testData.sender)
-    await subscribePage.selectSendWhen(SendWhen.NOW);
-    await subscribePage.clickOnPay();
+    await subscribePageActions.fillSubscriptionForm({
+        itemType: ItemType.COLOGNE,
+        fullName: testData.name,
+        email: testData.email,
+        message: testData.message,
+        sender: testData.sender,
+        sendWhen: SendWhen.NOW
+    });
 
     await expect(checkoutPage.getPageTitle()).toHaveText(expectedMessages.checkoutMessage);
 });
 
 test('Select Perfume', async() => {
-    await subscribePage.selectItemType(ItemType.PERFUME);
-
-    await subscribePage.specifyValueForInput(Inputs.NAME, testData.name)
-    await subscribePage.specifyValueForInput(Inputs.EMAIL, testData.email)
-    await subscribePage.specifyValueForInput(Inputs.MESSAGE, testData.message)
-    await subscribePage.specifyValueForInput(Inputs.SENDER, testData.sender)
-    await subscribePage.selectSendWhen(SendWhen.NOW);
-    await subscribePage.clickOnPay();
+    await subscribePageActions.fillSubscriptionForm({
+        itemType: ItemType.PERFUME,
+        fullName: testData.name,
+        email: testData.email,
+        message: testData.message,
+        sender: testData.sender,
+        sendWhen: SendWhen.NOW
+    });
 
     await expect(checkoutPage.getPageTitle()).toHaveText(expectedMessages.checkoutMessage);
 })
 
 test('Select Cologne/Perfume for a later date', async () =>{
-    const date = new Date(testData.futureDate);
-    await subscribePage.selectItemType(ItemType.PERFUME);
-
-    await subscribePage.specifyValueForInput(Inputs.NAME, testData.name);
-    await subscribePage.specifyValueForInput(Inputs.EMAIL, testData.email);
-    await subscribePage.specifyValueForInput(Inputs.MESSAGE, testData.message);
-    await subscribePage.specifyValueForInput(Inputs.SENDER, testData.sender);
-    await subscribePage.selectSendWhen(SendWhen.LATER);
-
-    await subscribePage.specifyDate(date.getMonth(), date.getDay(), date.getFullYear());
-    await subscribePage.clickOnPay();
+    await subscribePageActions.fillSubscriptionForm({
+        itemType: ItemType.PERFUME,
+        fullName: testData.name,
+        email: testData.email,
+        message: testData.message,
+        sender: testData.sender,
+        sendWhen: SendWhen.LATER,
+        date: testData.futureDate
+    });
 
     await expect(checkoutPage.getPageTitle()).toHaveText(expectedMessages.checkoutMessage);
 })
 
 test('Select Cologne/Perfume without a message', async () => {
-    await subscribePage.selectItemType(ItemType.PERFUME);
-
-    await subscribePage.specifyValueForInput(Inputs.NAME, testData.name);
-    await subscribePage.specifyValueForInput(Inputs.EMAIL, testData.email);
-    await subscribePage.specifyValueForInput(Inputs.SENDER, testData.sender);
-    await subscribePage.selectSendWhen(SendWhen.NOW);
-    await subscribePage.clickOnPay();
+    await subscribePageActions.fillSubscriptionForm({
+        itemType: ItemType.PERFUME,
+        fullName: testData.name,
+        email: testData.email,
+        message: "",
+        sender: testData.sender,
+        sendWhen: SendWhen.NOW,
+    });
 
     await expect(checkoutPage.getPageTitle()).toHaveText(expectedMessages.checkoutMessage);
 })
 
 test('Select Cologne/Perfume without Who is it from?', async() => {
-    await subscribePage.selectItemType(ItemType.COLOGNE);
-
-    await subscribePage.specifyValueForInput(Inputs.NAME, testData.name);
-    await subscribePage.specifyValueForInput(Inputs.EMAIL, testData.email);
-    await subscribePage.specifyValueForInput(Inputs.MESSAGE, testData.message);
-    await subscribePage.selectSendWhen(SendWhen.NOW);
-    await subscribePage.clickOnPay();
+    await subscribePageActions.fillSubscriptionForm({
+        itemType: ItemType.COLOGNE,
+        fullName: testData.name,
+        email: testData.email,
+        message: testData.message,
+        sender: "",
+        sendWhen: SendWhen.NOW,
+    });
 
     await expect(checkoutPage.getPageTitle()).toHaveText(expectedMessages.checkoutMessage);
 })
 
 test('Negative - no receipt name', async () => {
-    await subscribePage.selectItemType(ItemType.PERFUME);
-
-    await subscribePage.specifyValueForInput(Inputs.EMAIL, testData.email);
-    await subscribePage.specifyValueForInput(Inputs.MESSAGE, testData.message);
-    await subscribePage.specifyValueForInput(Inputs.SENDER, testData.sender);
-    await subscribePage.selectSendWhen(SendWhen.NOW);
-    await subscribePage.clickOnPay();
+    await subscribePageActions.fillSubscriptionForm({
+        itemType: ItemType.PERFUME,
+        fullName: "",
+        email: testData.email,
+        message: testData.message,
+        sender: testData.sender,
+        sendWhen: SendWhen.NOW,
+    });
 
     await subscribePage.getErrorMessage(Errors.NAME_ERROR).toBeVisible();
     await subscribePage.getErrorMessage(Errors.NAME_ERROR).toHaveText(expectedMessages.requiredFieldMessage);
 })
 
 test('Negative - no email', async () => {
-    await subscribePage.selectItemType(ItemType.COLOGNE);
-
-    await subscribePage.specifyValueForInput(Inputs.NAME, testData.name);
-    await subscribePage.specifyValueForInput(Inputs.MESSAGE, testData.message);
-    await subscribePage.specifyValueForInput(Inputs.SENDER, testData.sender);
-    await subscribePage.selectSendWhen(SendWhen.NOW);
-    await subscribePage.clickOnPay();
+    await subscribePageActions.fillSubscriptionForm({
+        itemType: ItemType.COLOGNE,
+        fullName: testData.name,
+        email: "",
+        message: testData.message,
+        sender: testData.sender,
+        sendWhen: SendWhen.NOW,
+    });
 
     await subscribePage.getErrorMessage(Errors.EMAIL_ERROR).toBeVisible();
     await subscribePage.getErrorMessage(Errors.EMAIL_ERROR).toHaveText(expectedMessages.requiredFieldMessage);
 });
 
 test('Negative - wrong email format', async () => {
-    await subscribePage.selectItemType(ItemType.PERFUME);
-
-    await subscribePage.specifyValueForInput(Inputs.NAME, testData.name);
-    await subscribePage.specifyValueForInput(Inputs.EMAIL, testData.wrongFormatEmail);
-    await subscribePage.specifyValueForInput(Inputs.MESSAGE, testData.message);
-    await subscribePage.specifyValueForInput(Inputs.SENDER, testData.sender);
-    await subscribePage.selectSendWhen(SendWhen.NOW);
-    await subscribePage.clickOnPay();
+    await subscribePageActions.fillSubscriptionForm({
+        itemType: ItemType.COLOGNE,
+        fullName: testData.name,
+        email: testData.wrongFormatEmail,
+        message: testData.message,
+        sender: testData.sender,
+        sendWhen: SendWhen.NOW,
+    });
 
     await subscribePage.getErrorMessage(Errors.EMAIL_ERROR).toBeVisible();
     await subscribePage.getErrorMessage(Errors.EMAIL_ERROR).toHaveText(expectedMessages.wrongEmailFormatMessage);
 })
 
 test('Negative - Send Later for a today\'s date', async () => {
-    const today = new Date();
-    await subscribePage.selectItemType(ItemType.COLOGNE);
-
-    await subscribePage.specifyValueForInput(Inputs.NAME, testData.name);
-    await subscribePage.specifyValueForInput(Inputs.EMAIL, testData.email);
-    await subscribePage.specifyValueForInput(Inputs.MESSAGE, testData.message);
-    await subscribePage.specifyValueForInput(Inputs.SENDER, testData.sender);
-    await subscribePage.selectSendWhen(SendWhen.LATER);
-
-    await subscribePage.specifyDate(today.getMonth(), today.getDay(), today.getFullYear());
-    await subscribePage.clickOnPay();
+    await subscribePageActions.fillSubscriptionForm({
+        itemType: ItemType.COLOGNE,
+        fullName: testData.name,
+        email: testData.email,
+        message: testData.message,
+        sender: testData.sender,
+        sendWhen: SendWhen.LATER,
+        date: new Date()
+    });
 
     await subscribePage.getErrorMessage(Errors.DATE_ERROR).toHaveText(expectedMessages.wrongDateMessage)
 })
 
 test('Negative - Send Later for a past date', async () => {
-    const pastDate = new Date(testData.pastDate);
-    await subscribePage.selectItemType(ItemType.PERFUME);
-
-    await subscribePage.specifyValueForInput(Inputs.NAME, testData.name);
-    await subscribePage.specifyValueForInput(Inputs.EMAIL, testData.email);
-    await subscribePage.specifyValueForInput(Inputs.MESSAGE, testData.message);
-    await subscribePage.specifyValueForInput(Inputs.SENDER, testData.sender);
-    await subscribePage.selectSendWhen(SendWhen.LATER);
-
-    await subscribePage.specifyDate(pastDate.getMonth(), pastDate.getDay(), pastDate.getFullYear());
-    await subscribePage.clickOnPay();
+    await subscribePageActions.fillSubscriptionForm({
+        itemType: ItemType.COLOGNE,
+        fullName: testData.name,
+        email: testData.email,
+        message: testData.message,
+        sender: testData.sender,
+        sendWhen: SendWhen.LATER,
+        date: testData.pastDate
+    });
 
     await subscribePage.getErrorMessage(Errors.DATE_ERROR).toHaveText(expectedMessages.wrongDateMessage)
 })
